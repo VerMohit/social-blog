@@ -1,9 +1,18 @@
 import React from "react";
 import { useState } from "react";
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
+import { IoMdCheckmarkCircle } from "react-icons/io";
+import { MdCancel } from "react-icons/md";
 
 interface contentProps {
   user: string;
+}
+
+interface ContentItem {
+  id: number;
+  datePosted: string;
+  userName: string;
+  post: string;
 }
 
 const Content: React.FC<contentProps> = ({ user }) => {
@@ -13,31 +22,76 @@ const Content: React.FC<contentProps> = ({ user }) => {
   const year = currentDate.getFullYear();
   const formattedDate = `${month} ${day}, ${year}`;
 
-  const loremTexts = [
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-  ];
+  const charLimit = 500;
 
-  const [contents, setContents] = useState([
-    {
-      id: 1,
-      datePosted: formattedDate,
-      userName: user,
-      post: "This is my first post",
-    },
-    {
-      id: 2,
-      datePosted: new Date().toLocaleDateString(),
-      userName: user,
-      post: loremTexts,
-    },
-  ]);
+  const loremTexts =
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+
+  // ------ STATES --------- //
+
+  // Empty list added to ensure that contents is not read as NULL if no contents exist when app opens
+  const [contents, setContents] = useState<ContentItem[]>(
+    [
+      {
+        id: 1,
+        datePosted: formattedDate,
+        userName: user,
+        post: "This is my first post",
+      },
+      {
+        id: 2,
+        datePosted: new Date().toLocaleDateString(),
+        userName: user,
+        post: loremTexts,
+      },
+      {
+        id: 3,
+        datePosted: new Date().toLocaleDateString(),
+        userName: user,
+        post: "This is my 3rd post",
+      },
+    ] || []
+  );
+
+  const [editedID, setEditedID] = useState(-1);
+  const [editedPost, setEditedPost] = useState("");
+  const [charCont, setChars] = useState(0);
+
+  // ----- EVENT HANDLERS -------- //
+
+  const handleTextEdit = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const val = e.target.value;
+    setEditedPost(val);
+    setChars(val.length);
+  };
 
   const handleDelete = (id: number) => {
     const remainingPosts = contents.filter((content) => content.id !== id);
     setContents(remainingPosts);
   };
+
+  const handleEdit = (id: number, post: string) => {
+    setEditedID(id);
+    setEditedPost(post);
+    setChars(post.length);
+  };
+
+  const handleSave = (id: number) => {
+    setContents(
+      contents.map((content) =>
+        content.id === id ? { ...content, post: editedPost } : content
+      )
+    );
+    setEditedID(-1);
+    setEditedPost("");
+  };
+
+  const handleCancel = () => {
+    setEditedID(-1);
+    setEditedPost("");
+  };
+
+  // ----- MAIN CODE TO RETURN ------ //
 
   return (
     <div>
@@ -47,11 +101,35 @@ const Content: React.FC<contentProps> = ({ user }) => {
             <li key={content.id}>
               <h3>{content.userName}</h3>
               <p>{content.datePosted}</p>
+
+              {editedID === content.id ? (
+                <div>
+                  <textarea
+                    value={editedPost}
+                    onChange={(e) => handleTextEdit(e)}
+                    maxLength={charLimit}
+                  />
+                  <p>{`${charCont}/${charLimit}`}</p>
+                  <IoMdCheckmarkCircle
+                    role="button"
+                    aria-label="Save changes"
+                    onClick={() => handleSave(content.id)}
+                  />
+                  <MdCancel
+                    role="button"
+                    aria-label="Save changes"
+                    onClick={() => handleCancel()}
+                  />
+                </div>
+              ) : (
+                <p>{content.post}</p>
+              )}
+
               <div>
                 <FaTrashAlt
                   role="button"
                   tabIndex={0}
-                  aria-label={`Delete ${content.userName}`}
+                  aria-label={`Delete ${content.post}`}
                   onClick={() => handleDelete(content.id)}
                 />
                 Delete
@@ -60,12 +138,11 @@ const Content: React.FC<contentProps> = ({ user }) => {
                 <FaEdit
                   role="button"
                   tabIndex={0}
-                  aria-label={`Edit ${content.userName}`}
+                  aria-label={`Edit ${content.post}`}
+                  onClick={() => handleEdit(content.id, content.post)}
                 />
                 Edit
               </div>
-
-              <p>{content.post}</p>
             </li>
           ))}
         </ul>
