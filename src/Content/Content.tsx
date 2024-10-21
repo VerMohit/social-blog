@@ -4,10 +4,6 @@ import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import { IoMdCheckmarkCircle } from "react-icons/io";
 import { MdCancel } from "react-icons/md";
 
-interface contentProps {
-  user: string;
-}
-
 interface ContentItem {
   id: number;
   datePosted: string;
@@ -15,44 +11,17 @@ interface ContentItem {
   post: string;
 }
 
-const Content: React.FC<contentProps> = ({ user }) => {
-  const currentDate = new Date();
-  const month = currentDate.toLocaleString("default", { month: "short" });
-  const day = currentDate.getDate();
-  const year = currentDate.getFullYear();
-  const formattedDate = `${month} ${day}, ${year}`;
+interface contentProps {
+  charLimit: number;
+  contents: ContentItem[];
+  setContents: any;
+}
 
-  const charLimit = 500;
-
-  const loremTexts =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
-
-  // ------ STATES --------- //
-
-  // Empty list added to ensure that contents is not read as NULL if no contents exist when app opens
-  const [contents, setContents] = useState<ContentItem[]>(
-    [
-      {
-        id: 1,
-        datePosted: formattedDate,
-        userName: user,
-        post: "This is my first post",
-      },
-      {
-        id: 2,
-        datePosted: new Date().toLocaleDateString(),
-        userName: user,
-        post: loremTexts,
-      },
-      {
-        id: 3,
-        datePosted: new Date().toLocaleDateString(),
-        userName: user,
-        post: "This is my 3rd post",
-      },
-    ] || []
-  );
-
+const Content: React.FC<contentProps> = ({
+  charLimit,
+  contents,
+  setContents,
+}) => {
   const [editedID, setEditedID] = useState(-1);
   const [editedPost, setEditedPost] = useState("");
   const [charCont, setChars] = useState(0);
