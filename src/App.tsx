@@ -51,12 +51,22 @@ export default function App() {
     ] || []
   );
 
+  const [charCount, setChars] = useState(0);
+
+  const handleDelete = (id: number) => {
+    const remainingPosts = contents.filter((content) => content.id !== id);
+    setContents(remainingPosts);
+  };
+
   return (
     <Container {...layoutProps}>
       <Content
         charLimit={charLimit}
         contents={contents}
+        charCount={charCount}
+        setChars={setChars}
         setContents={setContents}
+        handleDelete={handleDelete}
       />
     </Container>
   );
