@@ -53,11 +53,6 @@ export default function App() {
 
   const [charCount, setChars] = useState(0);
 
-  const handleDelete = (id: number) => {
-    const remainingPosts = contents.filter((content) => content.id !== id);
-    setContents(remainingPosts);
-  };
-
   return (
     <Container {...layoutProps}>
       <Content
@@ -66,7 +61,6 @@ export default function App() {
         charCount={charCount}
         setChars={setChars}
         setContents={setContents}
-        handleDelete={handleDelete}
       />
     </Container>
   );

@@ -1,6 +1,5 @@
 import React from "react";
-import { IoMdCheckmarkCircle } from "react-icons/io";
-import { MdCancel } from "react-icons/md";
+import Post from "../Post/Post";
 
 const EditPost: React.FC<editPost> = ({
   content,
@@ -18,30 +17,19 @@ const EditPost: React.FC<editPost> = ({
     setChars(val.length);
   };
 
-  const handleCancel = () => {
-    setEditedID(-1);
-    setEditedPost("");
-  };
-
   return (
-    <div>
-      <textarea
-        value={editedPost}
-        onChange={(e) => handleTextEdit(e)}
-        maxLength={charLimit}
-      />
-      <p>{`${charCount}/${charLimit}`}</p>
-      <IoMdCheckmarkCircle
-        role="button"
-        aria-label="Save changes"
-        onClick={() => handleSaveEdits(content.id)}
-      />
-      <MdCancel
-        role="button"
-        aria-label="Save changes"
-        onClick={() => handleCancel()}
-      />
-    </div>
+    <Post
+      content={content}
+      value={editedPost}
+      charCount={charCount}
+      charLimit={charLimit}
+      confirmLabel={"Save changes"}
+      cancelLabel={"Cancel changes"}
+      setEditedID={setEditedID}
+      setEditedPost={setEditedPost}
+      handlerText={handleTextEdit}
+      handlerPost={handleSaveEdits}
+    />
   );
 };
 
